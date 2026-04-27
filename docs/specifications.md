@@ -35,9 +35,12 @@ Develop a tool for reviewing and processing training data for AI model developme
 3. **Comparison UI**:
     - Display the source image and all matched candidate images on a single screen for easy comparison.
     - The layout must adjust dynamically based on the number of selected candidate folders.
+    - **Dynamic Sizing**: Images should scale based on window size while maintaining aspect ratio.
 4. **Selection & Storage**:
     - Allow the user to select one candidate as the final GT.
-    - Save the selected candidate to a designated output folder (preserving origin information if necessary).
+    - Save the selected candidate to a designated output folder.
+    - **Keyboard Shortcuts**: Support for navigation (`Arrows`), selection (`1-9`), and saving (`Enter/S`).
 5. **Workflow Management**:
     - Navigation to move to the next image pair.
     - Progress tracking (processed vs. total images).
+    - **Resume Feature**: Automatically save and load current progress from a file.

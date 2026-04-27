@@ -5,7 +5,9 @@ from PySide6.QtWidgets import (
     QLabel, QMessageBox, QAbstractItemView
 )
 from PySide6.QtCore import Qt
+from pathlib import Path
 from core.data_loader import DataLoader
+from ui.main_window import ReviewWindow
 
 class PikFixApp(QMainWindow):
     def __init__(self):
@@ -80,7 +82,21 @@ class PikFixApp(QMainWindow):
         self.source_list.addItems(folders)
         self.candidate_list.addItems(folders)
         
+        # Link source selection to candidate list filtering
+        self.source_list.currentItemChanged.connect(self.filter_candidates)
+        
         self.btn_start.setEnabled(len(folders) > 0)
+
+    def filter_candidates(self, current, previous):
+        if current:
+            source_folder = current.text()
+            # Automatically select all folders except the source folder
+            for i in range(self.candidate_list.count()):
+                item = self.candidate_list.item(i)
+                if item.text() != source_folder:
+                    item.setSelected(True)
+                else:
+                    item.setSelected(False)
 
     def start_review(self):
         source_item = self.source_list.currentItem()
@@ -97,17 +113,36 @@ class PikFixApp(QMainWindow):
         source_folder = source_item.text()
         candidate_folders = [item.text() for item in selected_candidates]
         
+        # For now, using root_path as output_path. 
+        # I will add a dedicated output path selector in the next turn.
+        output_folder = self.data_loader.root_path 
+        
         try:
             matched_data = self.data_loader.match_images(source_folder, candidate_folders)
-            QMessageBox.information(
-                self, 
-                "Success", 
-                f"Successfully matched {len(matched_data)} image sets!\n"
-                f"Source: {source_folder}\n"
-                f"Candidates: {', '.join(candidate_folders)}"
-            )
-            # Next phase: Transition to the Review Window
-            print(f"Matched {len(matched_data)} images. Ready for review UI.")
+            
+            if not matched_data:
+                QMessageBox.warning(self, "Warning", "No matching images found between selected folders.")
+                return
+
+            # SESSION MANAGEMENT: Check for existing progress
+            from core.storage import ProgressManager
+            progress_mgr = ProgressManager(str(self.data_loader.root_path))
+            saved_data = progress_mgr.load_progress()
+            
+            if saved_data.get("current_index", 0) > 0:
+                reply = QMessageBox.question(
+                    self, "Resume Session", 
+                    f"Previous progress found. Resume from image {saved_data['current_index'] + 1}?",
+                    QMessageBox.Yes | QMessageBox.No
+                )
+                if reply == QMessageBox.No:
+                    progress_mgr.clear_progress()
+                    saved_data = {"current_index": 0, "selections": {}}
+
+            # Transition to the Review Window with output_folder
+            self.review_window = ReviewWindow(matched_data, str(self.data_loader.root_path), str(output_folder))
+            self.review_window.show()
+            self.hide() 
             
         except Exception as e:
             QMessageBox.critical(self, "Error", f"An error occurred while matching images:\n{str(e)}")
