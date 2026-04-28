@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.venv/
+venv/
+env/
+bin/
+lib/
+include/
+
+# PyInstaller
+build/
+dist/
+*.spec
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# PikFix Project Specifics
+# Ignore the final GT results to avoid committing large image datasets
+final_gt/
+# Ignore local progress tracking
+review_progress.json
