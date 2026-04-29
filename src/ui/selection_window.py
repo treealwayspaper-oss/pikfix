@@ -11,7 +11,7 @@ from ui.widgets import ImageCandidateWidget, DynamicImageLabel
 from ui.detail_window import ImageDetailWindow
 from core.storage import ProgressManager
 
-class ReviewWindow(QMainWindow):
+class SelectionWindow(QMainWindow):
     """
     The main review window where the user compares the source image 
     with candidate images and selects the final GT.
