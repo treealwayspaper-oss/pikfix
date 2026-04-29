@@ -13,11 +13,12 @@ class DataLoader:
         self.supported_extensions = {'.jpg', '.jpeg', '.png', '.bmp', '.webp', '.tif', '.tiff'}
 
     def get_subfolders(self) -> List[str]:
-        """Returns a list of subdirectories in the root path."""
+        """Returns a list of subdirectories in the root path, excluding the output folder."""
         if not self.root_path.exists() or not self.root_path.is_dir():
             return []
         
-        return [f.name for f in self.root_path.iterdir() if f.is_dir()]
+        # Exclude 'final_gt' folder to avoid selecting output as source/candidate
+        return [f.name for f in self.root_path.iterdir() if f.is_dir() and f.name != "final_gt"]
 
     def _get_image_files(self, folder_path: Path) -> Dict[str, Path]:
         """

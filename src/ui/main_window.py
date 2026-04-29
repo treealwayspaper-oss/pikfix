@@ -166,7 +166,7 @@ class ReviewWindow(QMainWindow):
         for i in range(self.candidates_grid.count()):
             item = self.candidates_grid.itemAt(i)
             if item and item.widget() and isinstance(item.widget(), ImageCandidateWidget):
-                # Select only the one that matches the folder_name
+                # Select only the one that matches the folder_name, and deselect others.
                 item.widget().set_selected(item.widget().folder_name == folder_name)
 
     def save_gt(self):

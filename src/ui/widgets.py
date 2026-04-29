@@ -93,6 +93,9 @@ class ImageCandidateWidget(QFrame):
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
+            # Toggle selection state: if already selected, deselect it
+            self._is_selected = not self._is_selected
+            self.update_style()
             self.clicked.emit(self.folder_name)
         super().mousePressEvent(event)
 
